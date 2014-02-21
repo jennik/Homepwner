@@ -10,6 +10,9 @@
 
 @interface ItemsViewController : UITableViewController <UITableViewDataSource>
 
+@property  (nonatomic, strong) IBOutlet UIView *headerView;
 
+- (IBAction)addNewItem:(id)sender;
+- (IBAction)toggleEditingMode:(id)sender;
 
 @end
