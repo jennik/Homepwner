@@ -13,10 +13,12 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    [application setStatusBarHidden:YES];
+//    [application setStatusBarHidden:YES];
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     
-    self.window.rootViewController = [[ItemsViewController alloc] init];
+    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:[[ItemsViewController alloc] init]];
+    
+    self.window.rootViewController = navController;
     
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];

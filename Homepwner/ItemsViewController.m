@@ -8,19 +8,9 @@
 
 #import "ItemsViewController.h"
 #import "BNRItemStore.h"
+#import "DetailViewController.h"
 
 @implementation ItemsViewController
-
-@synthesize headerView;
-
-- (UIView *)headerView
-{
-    if (!self->headerView)
-    {
-        [[NSBundle mainBundle] loadNibNamed:@"HeaderView" owner:self options:nil];
-    }
-    return self->headerView;
-}
 
 - (id)init
 {
@@ -30,6 +20,11 @@
         {
             [[BNRItemStore sharedStore] createItem];
         }
+        self.navigationItem.title = @"Homepwner";
+        
+        self.navigationItem.rightBarButtonItem =[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addNewItem:)];
+        self.navigationItem.leftBarButtonItem = self.editButtonItem;
+        
     }
     return self;
 }
@@ -63,37 +58,13 @@
     return cell;
 }
 
-- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
-{
-    return self.headerView;
-}
-
-- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
-{
-    return self.headerView.bounds.size.height;
-}
-
-- (IBAction)addNewItem:(id)sender
+- (void)addNewItem:(id)sender
 {
     BNRItem *newItem = [[BNRItemStore sharedStore] createItem];
     NSUInteger lastRow = [[[BNRItemStore sharedStore] allItems] indexOfObject:newItem];
     NSIndexPath *ip = [NSIndexPath indexPathForRow:lastRow inSection:0];
     
     [self.tableView insertRowsAtIndexPaths:@[ip] withRowAnimation:UITableViewRowAnimationTop];
-}
-
-- (IBAction)toggleEditingMode:(id)sender
-{
-    if (self.isEditing)
-    {
-        [sender setTitle:@"Edit" forState:UIControlStateNormal];
-        [self setEditing:NO animated:YES];
-    }
-    else
-    {
-        [sender setTitle:@"Done" forState:UIControlStateNormal];
-        [self setEditing:YES animated:YES];
-    }
 }
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
@@ -126,6 +97,26 @@
 - (NSIndexPath *)tableView:(UITableView *)tableView targetIndexPathForMoveFromRowAtIndexPath:(NSIndexPath *)sourceIndexPath toProposedIndexPath:(NSIndexPath *)proposedDestinationIndexPath
 {
     return (proposedDestinationIndexPath.row == [[[BNRItemStore sharedStore] allItems] count]) ? sourceIndexPath : proposedDestinationIndexPath;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (indexPath.row == [[[BNRItemStore sharedStore] allItems] count])
+    {
+        return;
+    }
+    
+    DetailViewController *detailController  = [[DetailViewController alloc] init];
+    detailController.item = [[[BNRItemStore sharedStore] allItems] objectAtIndex:indexPath.row];
+    
+    [self.navigationController pushViewController:detailController animated:YES];
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    [self.tableView reloadData];
 }
 
 @end
