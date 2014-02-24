@@ -148,9 +148,9 @@
 				0412B7A518B2A1D9008236CF /* ItemsViewController.m */,
 				0487A69C18B7BD5B0025FA44 /* DetailViewController.h */,
 				0487A69D18B7BD5B0025FA44 /* DetailViewController.m */,
+				0487A69E18B7BD5B0025FA44 /* DetailViewController.xib */,
 				04B4C18018BA7C2F009CCA2C /* CameraCenterOverlayView.h */,
 				04B4C18118BA7C2F009CCA2C /* CameraCenterOverlayView.m */,
-				0487A69E18B7BD5B0025FA44 /* DetailViewController.xib */,
 				0487A6A118B7F1DC0025FA44 /* DateChangeViewController.h */,
 				0487A6A218B7F1DC0025FA44 /* DateChangeViewController.m */,
 				0487A6A318B7F1DC0025FA44 /* DateChangeViewController.xib */,
@@ -421,7 +421,9 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Homepwner/Homepwner-Prefix.pch";
 				INFOPLIST_FILE = "Homepwner/Homepwner-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -434,7 +436,9 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Homepwner/Homepwner-Prefix.pch";
 				INFOPLIST_FILE = "Homepwner/Homepwner-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

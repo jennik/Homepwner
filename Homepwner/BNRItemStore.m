@@ -55,7 +55,7 @@
 }
 
 
-- (void)moveItemAtIndex:(int)from to:(int)to
+- (void)moveItemAtIndex:(NSInteger)from to:(NSInteger)to
 {
     if (from == to)
     {

@@ -24,7 +24,6 @@
         
         self.navigationItem.rightBarButtonItem =[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addNewItem:)];
         self.navigationItem.leftBarButtonItem = self.editButtonItem;
-        
     }
     return self;
 }
@@ -60,11 +59,17 @@
 
 - (void)addNewItem:(id)sender
 {
-    BNRItem *newItem = [[BNRItemStore sharedStore] createItem];
-    NSUInteger lastRow = [[[BNRItemStore sharedStore] allItems] indexOfObject:newItem];
-    NSIndexPath *ip = [NSIndexPath indexPathForRow:lastRow inSection:0];
+    DetailViewController *addItemView = [[DetailViewController alloc] initForNewItem:YES];
+    addItemView.item = [[BNRItemStore sharedStore] createItem];
+    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:addItemView];
+//    navController.modalPresentationStyle = UIModalPresentationFormSheet;
+    navController.modalTransitionStyle = UIModalTransitionStylePartialCurl;
     
-    [self.tableView insertRowsAtIndexPaths:@[ip] withRowAnimation:UITableViewRowAnimationTop];
+    addItemView.dismissBlock = ^{
+        [self.tableView reloadData];
+    };
+    
+    [self presentViewController:navController animated:YES completion:nil];
 }
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
@@ -106,7 +111,7 @@
         return;
     }
     
-    DetailViewController *detailController  = [[DetailViewController alloc] init];
+    DetailViewController *detailController  = [[DetailViewController alloc] initForNewItem:NO];
     detailController.item = [[[BNRItemStore sharedStore] allItems] objectAtIndex:indexPath.row];
     
     [self.navigationController pushViewController:detailController animated:YES];

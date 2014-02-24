@@ -9,6 +9,8 @@
 #import "DetailViewController.h"
 #import "DateChangeViewController.h"
 #import "BNRImageStore.h"
+#import "CameraCenterOverlayView.h"
+#import "BNRItemStore.h"
 
 @interface DetailViewController ()
 
@@ -16,13 +18,22 @@
 
 @implementation DetailViewController
 
-@synthesize nameField, serialNumberField, valueField, dateLabel, item, delButton;
+@synthesize nameField, serialNumberField, valueField, dateLabel, item, delButton, dismissBlock;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization
+    @throw [NSException exceptionWithName:@"Wrong initializer" reason:@"use initForNewItem:" userInfo:nil];
+    
+    return nil;
+}
+
+- (id)initForNewItem:(BOOL)isNew
+{
+    if ((self = [super initWithNibName:@"DetailViewController" bundle:nil]) && isNew)
+    {
+        self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(save:)];
+        
+        self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancel:)];
     }
     return self;
 }
@@ -83,11 +94,21 @@
 
 - (IBAction)takePicture:(id)sender
 {
+    if ([self.imagePickerPopover isPopoverVisible])
+    {
+        [self.imagePickerPopover dismissPopoverAnimated:YES];
+        self.imagePickerPopover = nil;
+        return;
+    }
     UIImagePickerController *imagePicker = [[UIImagePickerController alloc] init];
     
     if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera])
     {
         imagePicker.sourceType = UIImagePickerControllerSourceTypeCamera;
+        
+        CameraCenterOverlayView *overlayView = [[CameraCenterOverlayView alloc] initWithFrame:CGRectMake(imagePicker.view.bounds.size.width / 2 - 25, imagePicker.view.bounds.size.height / 2 - 25, 50, 50)];
+        overlayView.backgroundColor = [UIColor clearColor];
+        imagePicker.cameraOverlayView = overlayView;
     }
     else
     {
@@ -95,12 +116,18 @@
     }
     
     imagePicker.allowsEditing = YES;
-    imagePicker.delegate = self;
+    imagePicker.delegate = self;    
     
-    UIView *overlayView = [[UIView alloc] initWithFrame:CGRectMake(imagePicker.view.bounds.size.width / 2 - 25, imagePicker.view.bounds.size.height / 2 - 25, 50, 50)];
-    imagePicker.cameraOverlayView = overlayView;
-    
-    [self presentViewController:imagePicker animated:YES completion:nil];
+    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad)
+    {
+        self.imagePickerPopover = [[UIPopoverController alloc] initWithContentViewController:imagePicker];
+        self.imagePickerPopover.delegate = self;
+        [self.imagePickerPopover presentPopoverFromBarButtonItem:sender permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+    }
+    else
+    {
+        [self presentViewController:imagePicker animated:YES completion:nil];
+    }
 }
 
 - (IBAction)backgroundTapped:(id)sender
@@ -132,8 +159,36 @@
     self.item.imageKey = (__bridge_transfer NSString *)imageUUIDString;
     
     [[BNRImageStore sharedStore] setImage:info[UIImagePickerControllerEditedImage] forKey:self.item.imageKey];
-    [self dismissViewControllerAnimated:YES completion:nil];
+    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone)
+    {
+        [self dismissViewControllerAnimated:YES completion:nil];
+    }
+    else
+    {
+        self.imageView.image = info[UIImagePickerControllerEditedImage];
+        self.delButton.hidden = NO;
+        
+        [self.imagePickerPopover dismissPopoverAnimated:YES];
+        self.imagePickerPopover = nil;
+    }
     
+    
+}
+
+- (void)popoverControllerDidDismissPopover:(UIPopoverController *)popoverController
+{
+    self.imagePickerPopover = nil;
+}
+
+- (void)save:(id)sender
+{
+    [self.presentingViewController dismissViewControllerAnimated:YES completion:self.dismissBlock];
+}
+
+- (void)cancel:(id)sender
+{
+    [[BNRItemStore sharedStore] removeItem:self.item];
+    [self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
 }
 
 @end

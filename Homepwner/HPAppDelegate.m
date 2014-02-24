@@ -17,6 +17,7 @@
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     
     UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:[[ItemsViewController alloc] init]];
+    navController.view.autoresizesSubviews = YES;
     
     self.window.rootViewController = navController;
     
