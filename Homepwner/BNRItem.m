@@ -63,4 +63,26 @@
 //    NSLog(@"Destroyed: %@", self);
 }
 
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+    if (self = [super init])
+    {
+        self.itemName = [aDecoder decodeObjectForKey:@"itemName"];
+        self.serialNumber = [aDecoder decodeObjectForKey:@"serialNumber"];
+        self.dateCreated = [aDecoder decodeObjectForKey:@"dateCreated"];
+        self.imageKey = [aDecoder decodeObjectForKey:@"imageKey"];
+        self.valueInDollars = [aDecoder decodeIntForKey:@"valueInDollars"];
+    }
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+    [aCoder encodeObject:self.itemName forKey:@"itemName"];
+    [aCoder encodeObject:self.serialNumber forKey:@"serialNumber"];
+    [aCoder encodeObject:self.dateCreated forKey:@"dateCreated"];
+    [aCoder encodeObject:self.imageKey forKey:@"imageKey"];
+    [aCoder encodeInt:self.valueInDollars forKey:@"valueInDollars"];
+}
+
 @end

@@ -67,4 +67,12 @@
     [allItems insertObject:p atIndex:to];
 }
 
+- (NSString *)itemArchivePath
+{
+    NSArray *documentDirectories = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentDirectory = [documentDirectories objectAtIndex:0];
+    
+    return [documentDirectory stringByAppendingPathComponent:@"items.archive"];
+}
+
 @end
